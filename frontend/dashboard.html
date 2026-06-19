@@ -81,6 +81,17 @@
             window.location.href = 'login.html';
         });
 
+        async function updateCategory(id, category) {
+            await fetch(API + `/transactions/${id}?category=${category}`, { method: 'PATCH', headers });
+            loadDashboard();
+        }
+
+        async function deleteTxn(id) {
+            if (!confirm('Delete this transaction?')) return;
+            await fetch(API + `/transactions/${id}`, { method: 'DELETE', headers });
+            loadDashboard();
+        }
+
         async function loadDashboard() {
             try {
                 const [summaryRes, txnRes, anomalyRes] = await Promise.all([
@@ -117,13 +128,17 @@
 
                 // Transactions
                 const txnList = document.getElementById('txn-list');
+                const categories = ['groceries','dining','transport','subscriptions','utilities','rent','shopping','health','entertainment','transfers','income','other'];
+
                 txnList.innerHTML = transactions.map(t => {
                     const isNeg = t.amount < 0;
                     const badge = t.is_anomaly ? '<span class="anomaly-badge">ANOMALY</span>' : '';
-                    return `<div class="txn-item">
+                    const options = categories.map(c => `<option value="${c}" ${c === t.category ? 'selected' : ''}>${c}</option>`).join('');
+                    return `<div class="txn-item" data-id="${t.id}">
                         <span class="desc">${t.description}${badge}</span>
-                        <span class="cat">${t.category}</span>
+                        <select class="cat-select" onchange="updateCategory(${t.id}, this.value)">${options}</select>
                         <span class="amount ${isNeg ? 'negative' : 'positive'}">${isNeg ? '-' : '+'}£${Math.abs(t.amount).toFixed(2)}</span>
+                        <button class="btn-delete" onclick="deleteTxn(${t.id})" title="Delete">✕</button>
                     </div>`;
                 }).join('');
 
@@ -131,10 +146,11 @@
                 if (anomalies.length > 0) {
                     document.getElementById('anomaly-section').style.display = 'block';
                     document.getElementById('anomaly-list').innerHTML = anomalies.map(a =>
-                        `<div class="txn-item">
+                        `<div class="txn-item anomaly-item" onclick="this.querySelector('.anomaly-reason').classList.toggle('visible')">
                             <span class="desc">${a.description}<span class="anomaly-badge">⚠</span></span>
-                            <span class="cat">${a.category}</span>
+                            <span class="cat-select" style="pointer-events:none;border:none;background:none;font-size:0.7rem;color:var(--text-light)">${a.category}</span>
                             <span class="amount negative">-£${Math.abs(a.amount).toFixed(2)}</span>
+                            <div class="anomaly-reason">${a.reason}</div>
                         </div>`
                     ).join('');
                 }

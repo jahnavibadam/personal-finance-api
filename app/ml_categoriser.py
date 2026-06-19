@@ -149,6 +149,15 @@ TRAINING_DATA = [
     ("electronics store", "shopping"),
     ("birthday gift", "shopping"),
     ("present for mum", "shopping"),
+    ("bra", "shopping"),
+    ("underwear", "shopping"),
+    ("jacket", "shopping"),
+    ("jeans", "shopping"),
+    ("trainers", "shopping"),
+    ("dress", "shopping"),
+    ("makeup", "shopping"),
+    ("skincare", "shopping"),
+    ("perfume", "shopping"),
 
     # Health
     ("pharmacy purchase", "health"),

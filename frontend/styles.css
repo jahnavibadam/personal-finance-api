@@ -331,6 +331,59 @@ body::before {
 .txn-item .amount.negative { color: var(--danger); }
 .txn-item .amount.positive { color: var(--success); }
 
+.cat-select {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--input-bg);
+    color: var(--text-dim);
+    cursor: pointer;
+    margin: 0 0.4rem;
+}
+
+.cat-select:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.btn-delete {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    transition: all 0.15s;
+    margin-left: 0.3rem;
+}
+
+.btn-delete:hover {
+    color: var(--danger);
+    background: rgba(198, 40, 72, 0.08);
+}
+
+.anomaly-item {
+    cursor: pointer;
+    flex-wrap: wrap;
+}
+
+.anomaly-reason {
+    display: none;
+    width: 100%;
+    margin-top: 0.4rem;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    background: var(--accent-glow);
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+}
+
+.anomaly-reason.visible {
+    display: block;
+}
+
 /* Anomaly badge */
 .anomaly-badge {
     display: inline-block;

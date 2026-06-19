@@ -95,3 +95,22 @@ def delete_transaction(
         raise HTTPException(status_code=404, detail="Transaction not found")
     db.delete(txn)
     db.commit()
+
+
+@router.patch("/{transaction_id}", response_model=TransactionResponse)
+def update_transaction_category(
+    transaction_id: int,
+    category: str = Query(...),
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user)
+):
+    txn = db.query(Transaction).filter(
+        Transaction.id == transaction_id,
+        Transaction.user_id == user.id
+    ).first()
+    if not txn:
+        raise HTTPException(status_code=404, detail="Transaction not found")
+    txn.category = category
+    db.commit()
+    db.refresh(txn)
+    return txn
