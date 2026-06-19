@@ -2,15 +2,15 @@
     --bg: #fff0f5;
     --bg-card: #ffffff;
     --border: #f5c6d0;
-    --text: #8b2252;
-    --text-dim: #b85c7a;
-    --text-light: #d4849e;
-    --accent: #e91e8c;
-    --accent-light: #f06baf;
-    --accent-glow: rgba(233, 30, 140, 0.08);
+    --text: #5c0a2d;
+    --text-dim: #872952;
+    --text-light: #b85c7a;
+    --accent: #c2185b;
+    --accent-light: #e91e6d;
+    --accent-glow: rgba(194, 24, 91, 0.08);
     --input-bg: #fff8fa;
     --success: #2ecc71;
-    --danger: #e74c6f;
+    --danger: #c62848;
     --radius: 16px;
     --radius-sm: 10px;
 }

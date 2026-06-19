@@ -13,6 +13,33 @@
             <button class="btn-logout" id="logout-btn">Sign Out</button>
         </div>
 
+        <!-- Add Transaction -->
+        <div class="section">
+            <h2 class="section-title">Add Transaction</h2>
+            <div class="card" style="max-width:100%">
+                <form id="add-txn-form" style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:end">
+                    <div class="form-group" style="flex:1;min-width:120px;margin:0">
+                        <label for="txn-amount">Amount (£)</label>
+                        <input type="text" id="txn-amount" placeholder="-45.50" required>
+                    </div>
+                    <div class="form-group" style="flex:2;min-width:180px;margin:0">
+                        <label for="txn-desc">Description</label>
+                        <input type="text" id="txn-desc" placeholder="Tesco groceries" required>
+                    </div>
+                    <div class="form-group" style="flex:1;min-width:120px;margin:0">
+                        <label for="txn-merchant">Merchant</label>
+                        <input type="text" id="txn-merchant" placeholder="Tesco">
+                    </div>
+                    <div class="form-group" style="flex:1;min-width:130px;margin:0">
+                        <label for="txn-date">Date</label>
+                        <input type="date" id="txn-date" required>
+                    </div>
+                    <button type="submit" class="btn-primary" style="width:auto;padding:0.7rem 1.5rem;margin:0">Add</button>
+                </form>
+                <div id="add-txn-msg" style="margin-top:0.5rem;font-size:0.8rem;color:var(--success);display:none"></div>
+            </div>
+        </div>
+
         <!-- Stats -->
         <div class="stats-grid" id="stats-grid">
             <div class="stat-card"><div class="value" id="total-spend">—</div><div class="label">This Month</div></div>
@@ -116,6 +143,46 @@
         }
 
         loadDashboard();
+
+        // Add transaction form
+        document.getElementById('txn-date').valueAsDate = new Date();
+
+        document.getElementById('add-txn-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const msg = document.getElementById('add-txn-msg');
+            msg.style.display = 'none';
+
+            const amount = parseFloat(document.getElementById('txn-amount').value);
+            const description = document.getElementById('txn-desc').value;
+            const merchant = document.getElementById('txn-merchant').value || null;
+            const date = document.getElementById('txn-date').value + 'T12:00:00';
+
+            try {
+                const res = await fetch(API + '/transactions', {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({ amount, description, merchant, date })
+                });
+
+                if (!res.ok) throw new Error('Failed to add');
+
+                const txn = await res.json();
+                msg.textContent = `Added: ${txn.description} → ${txn.category} (£${Math.abs(txn.amount).toFixed(2)})`;
+                msg.style.display = 'block';
+                msg.style.color = 'var(--success)';
+
+                document.getElementById('txn-amount').value = '';
+                document.getElementById('txn-desc').value = '';
+                document.getElementById('txn-merchant').value = '';
+
+                // Refresh dashboard
+                loadDashboard();
+            } catch (err) {
+                msg.textContent = 'Failed to add transaction';
+                msg.style.display = 'block';
+                msg.style.color = 'var(--danger)';
+            }
+        });
     </script>
 </body>
 </html>
