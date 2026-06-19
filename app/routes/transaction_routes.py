@@ -100,7 +100,8 @@ def delete_transaction(
 @router.patch("/{transaction_id}", response_model=TransactionResponse)
 def update_transaction_category(
     transaction_id: int,
-    category: str = Query(...),
+    category: str = Query(default=None),
+    is_anomaly: bool = Query(default=None),
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user)
 ):
@@ -110,7 +111,10 @@ def update_transaction_category(
     ).first()
     if not txn:
         raise HTTPException(status_code=404, detail="Transaction not found")
-    txn.category = category
+    if category is not None:
+        txn.category = category
+    if is_anomaly is not None:
+        txn.is_anomaly = is_anomaly
     db.commit()
     db.refresh(txn)
     return txn

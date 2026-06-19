@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpendSense — History</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="dashboard">
+        <div class="dashboard-header">
+            <h1>Monthly History</h1>
+            <div>
+                <a href="dashboard.html" class="btn-logout" style="text-decoration:none;margin-right:0.5rem">← Dashboard</a>
+                <button class="btn-logout" id="logout-btn">Sign Out</button>
+            </div>
+        </div>
+
+        <div id="history-list"></div>
+    </div>
+
+    <script>
+        const API = '';
+        const token = localStorage.getItem('token');
+        if (!token) { window.location.href = 'login.html'; }
+        const headers = { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' };
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+        });
+
+        async function loadHistory() {
+            const res = await fetch(API + '/insights/history', { headers });
+            if (res.status === 401) { window.location.href = 'login.html'; return; }
+            const months = await res.json();
+
+            const container = document.getElementById('history-list');
+
+            if (months.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-dim);text-align:center">No transaction history yet.</p>';
+                return;
+            }
+
+            container.innerHTML = months.map(m => {
+                const catRows = m.categories.map(c =>
+                    `<div style="display:flex;justify-content:space-between;padding:0.3rem 0;font-size:0.8rem">
+                        <span style="text-transform:capitalize">${c.category}</span>
+                        <span><strong>£${c.total.toFixed(2)}</strong> <span style="color:var(--text-light)">(${c.percentage}%)</span></span>
+                    </div>`
+                ).join('');
+
+                return `<div class="card" style="max-width:100%;margin-bottom:1rem">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem">
+                        <h3 style="font-size:1.1rem;color:var(--accent)">${formatMonth(m.month)}</h3>
+                        <span style="font-size:0.8rem;color:var(--text-dim)">${m.transaction_count} transactions</span>
+                    </div>
+                    <div style="display:flex;align-items:baseline;gap:0.5rem;margin-bottom:0.75rem">
+                        <span style="font-size:1.5rem;font-weight:800;color:var(--text)">£${m.total_spend.toFixed(2)}</span>
+                        <span style="font-size:0.75rem;color:var(--text-light)">total spend</span>
+                    </div>
+                    <div>${catRows}</div>
+                </div>`;
+            }).join('');
+        }
+
+        function formatMonth(str) {
+            const [y, m] = str.split('-');
+            const names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            return names[parseInt(m) - 1] + ' ' + y;
+        }
+
+        loadHistory();
+    </script>
+</body>
+</html>

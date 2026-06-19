@@ -10,7 +10,10 @@
     <div class="dashboard">
         <div class="dashboard-header">
             <h1>SpendSense</h1>
-            <button class="btn-logout" id="logout-btn">Sign Out</button>
+            <div>
+                <a href="history.html" class="btn-logout" style="text-decoration:none;margin-right:0.5rem">📅 History</a>
+                <button class="btn-logout" id="logout-btn">Sign Out</button>
+            </div>
         </div>
 
         <!-- Add Transaction -->
@@ -92,6 +95,11 @@
             loadDashboard();
         }
 
+        async function dismissAnomaly(id) {
+            await fetch(API + `/transactions/${id}?is_anomaly=false`, { method: 'PATCH', headers });
+            loadDashboard();
+        }
+
         async function loadDashboard() {
             try {
                 const [summaryRes, txnRes, anomalyRes] = await Promise.all([
@@ -146,13 +154,15 @@
                 if (anomalies.length > 0) {
                     document.getElementById('anomaly-section').style.display = 'block';
                     document.getElementById('anomaly-list').innerHTML = anomalies.map(a =>
-                        `<div class="txn-item anomaly-item" onclick="this.querySelector('.anomaly-reason').classList.toggle('visible')">
-                            <span class="desc">${a.description}<span class="anomaly-badge">⚠</span></span>
-                            <span class="cat-select" style="pointer-events:none;border:none;background:none;font-size:0.7rem;color:var(--text-light)">${a.category}</span>
+                        `<div class="txn-item anomaly-item">
+                            <span class="desc" onclick="this.parentElement.querySelector('.anomaly-reason').classList.toggle('visible')">${a.description}<span class="anomaly-badge">⚠</span></span>
                             <span class="amount negative">-£${Math.abs(a.amount).toFixed(2)}</span>
+                            <button class="btn-dismiss" onclick="dismissAnomaly(${a.id})" title="Not an anomaly">Dismiss</button>
                             <div class="anomaly-reason">${a.reason}</div>
                         </div>`
                     ).join('');
+                } else {
+                    document.getElementById('anomaly-section').style.display = 'none';
                 }
             } catch (e) {
                 console.error('Dashboard load error:', e);

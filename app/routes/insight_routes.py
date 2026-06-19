@@ -24,6 +24,30 @@ def monthly_summary(
     return get_monthly_summary(db, user.id, y, m)
 
 
+@router.get("/history", response_model=list[MonthlySummary])
+def monthly_history(
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user)
+):
+    """Get summaries for all months that have transactions."""
+    from sqlalchemy import distinct
+    from app.models import Transaction
+
+    # Find all distinct year-month combos
+    txns = db.query(
+        extract("year", Transaction.date).label("y"),
+        extract("month", Transaction.date).label("m")
+    ).filter(
+        Transaction.user_id == user.id
+    ).distinct().all()
+
+    summaries = []
+    for row in sorted(txns, key=lambda r: (r.y, r.m), reverse=True):
+        s = get_monthly_summary(db, user.id, int(row.y), int(row.m))
+        summaries.append(s)
+    return summaries
+
+
 @router.get("/trends", response_model=list[TrendPoint])
 def weekly_trends(
     weeks: int = Query(default=8, le=52),
