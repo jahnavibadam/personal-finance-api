@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from app.database import SessionLocal, engine, Base
 from app.models import User, Transaction
 from app.auth import hash_password
-from app.categoriser import categorise_transaction
+from app.ml_categoriser import smart_categorise
 
 Base.metadata.create_all(bind=engine)
 
@@ -70,7 +70,7 @@ def seed():
                 amount = round(amount * random.uniform(0.8, 1.3), 2)
             date = today - timedelta(weeks=weeks_ago, days=random.randint(0, 6))
 
-            category = categorise_transaction(desc, merchant)
+            category = smart_categorise(desc, merchant)
             txn = Transaction(
                 user_id=user.id,
                 amount=amount,

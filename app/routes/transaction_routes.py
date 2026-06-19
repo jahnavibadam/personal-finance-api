@@ -7,7 +7,7 @@ from app.database import get_db
 from app.models import User, Transaction
 from app.schemas import TransactionCreate, TransactionResponse
 from app.auth import get_current_user
-from app.categoriser import categorise_transaction
+from app.ml_categoriser import smart_categorise
 
 router = APIRouter(prefix="/transactions", tags=["transactions"])
 
@@ -18,7 +18,7 @@ def create_transaction(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user)
 ):
-    category = txn.category or categorise_transaction(txn.description, txn.merchant)
+    category = txn.category or smart_categorise(txn.description, txn.merchant)
 
     transaction = Transaction(
         user_id=user.id,
@@ -42,7 +42,7 @@ def bulk_create(
 ):
     results = []
     for txn in txns:
-        category = txn.category or categorise_transaction(txn.description, txn.merchant)
+        category = txn.category or smart_categorise(txn.description, txn.merchant)
         transaction = Transaction(
             user_id=user.id,
             amount=txn.amount,
