@@ -20,15 +20,15 @@
                 <form id="add-txn-form" style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:end">
                     <div class="form-group" style="flex:1;min-width:120px;margin:0">
                         <label for="txn-amount">Amount (£)</label>
-                        <input type="text" id="txn-amount" placeholder="-45.50" required>
+                        <input type="text" id="txn-amount" placeholder="" required>
                     </div>
                     <div class="form-group" style="flex:2;min-width:180px;margin:0">
                         <label for="txn-desc">Description</label>
-                        <input type="text" id="txn-desc" placeholder="Tesco groceries" required>
+                        <input type="text" id="txn-desc" placeholder="" required>
                     </div>
                     <div class="form-group" style="flex:1;min-width:120px;margin:0">
                         <label for="txn-merchant">Merchant</label>
-                        <input type="text" id="txn-merchant" placeholder="Tesco">
+                        <input type="text" id="txn-merchant" placeholder="">
                     </div>
                     <div class="form-group" style="flex:1;min-width:130px;margin:0">
                         <label for="txn-date">Date</label>
@@ -36,6 +36,7 @@
                     </div>
                     <button type="submit" class="btn-primary" style="width:auto;padding:0.7rem 1.5rem;margin:0">Add</button>
                 </form>
+                <p style="margin-top:0.6rem;font-size:0.75rem;color:var(--text-light)">Use negative amounts for spending (e.g. -45.50) and positive for money received (e.g. 2500)</p>
                 <div id="add-txn-msg" style="margin-top:0.5rem;font-size:0.8rem;color:var(--success);display:none"></div>
             </div>
         </div>
